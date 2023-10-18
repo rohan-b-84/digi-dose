@@ -2,7 +2,7 @@ const fs = require("fs");
 const Parser = require("rss-parser");
 const axios = require("axios");
 const extractor = require("unfluff");
-var uniqid = require('uniqid'); 
+var uniqid = require("uniqid");
 
 const updateData = async (category, url, dbPath) => {
   try {
@@ -10,14 +10,14 @@ const updateData = async (category, url, dbPath) => {
     let feed = await parser.parseURL(url);
 
     let items = feed.items;
-    const DATA = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+    const DATA = JSON.parse(fs.readFileSync(dbPath, "utf8"));
 
     for (const item of items) {
-      let id = uniqid()
+      let id = uniqid();
       let title = item.title;
       let link = item.link;
       let description = await item.contentSnippet;
-      let date = item.pubDate;
+      let date = item.pubDate || Date.now();
 
       let alreadyExists = DATA.some((newsItem) => newsItem.link === link);
 
@@ -37,7 +37,7 @@ const updateData = async (category, url, dbPath) => {
             content,
             imgLink,
             category,
-            id
+            id,
           };
 
           DATA.push(newNewsItem);
@@ -53,6 +53,5 @@ const updateData = async (category, url, dbPath) => {
     console.error(`Error updating RSS data for ${category}: ${error.message}`);
   }
 };
-
 
 module.exports = updateData;

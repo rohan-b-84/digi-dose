@@ -38,7 +38,7 @@ cron.schedule("*/15 * * * *", () => {
 });
 
 app.get("/", (req, res) => {
-  res.send("hi");
+  res.send("Digi Dose Server is Running!");
 });
 
 app.use("/news", router);
