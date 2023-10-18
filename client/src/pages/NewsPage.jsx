@@ -20,7 +20,6 @@ export default function NewsPage() {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
-    console.log(`${BACKEND_URL}/news/${category}/${id}`)
     axios
       .get(`${BACKEND_URL}/news/${category}/${id}`)
       .then((res) => res.data)

@@ -18,8 +18,7 @@ const NewsList = () => {
 
   useEffect(() => {
     setLoading(true);
-    console.log(`${BACKEND_URL}/news/${category}`)
-
+    
     axios
       .get(
         `${BACKEND_URL}/news/${category}?page=${currentPage}&limit=${limit}`
