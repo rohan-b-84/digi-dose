@@ -2,31 +2,37 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NewsItem from "../components/NewsItem";
 import SkeletonNewsItem from "../components/_skeletons/NewsItem";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const NewsList = () => {
   const [NEWS, setNEWS] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams({
+    page: 1,
+    limit: 9,
+  });
+
+  const currentPage = searchParams.get("page");
+  const limit = searchParams.get("limit");
 
   const { category } = useParams();
   const location = useLocation();
 
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 9;
 
   useEffect(() => {
     setLoading(true);
-    
+
     axios
       .get(
-        `${BACKEND_URL}/news/${category}?page=${currentPage}&limit=${limit}`
+        `${BACKEND_URL}/news/${category}?page=${parseInt(
+          currentPage
+        )}&limit=${limit}`
       )
       .then((res) => res.data)
       .then((data) => {
         setNEWS(data.news);
-        setCurrentPage(data.currentPage);
         setTotalPages(data.totalPages);
         setLoading(false);
       })
@@ -34,11 +40,17 @@ const NewsList = () => {
         alert("Some Error Occured");
         setLoading(true);
       });
-  }, [currentPage, limit, location.pathname]);
+  }, [parseInt(currentPage), location.pathname]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
+      setSearchParams(
+        (prev) => {
+          prev.set("page", newPage);
+          return prev;
+        },
+        { replace: true }
+      );
     }
   };
 
@@ -58,22 +70,22 @@ const NewsList = () => {
           ))}
       </div>
       <div className="flex justify-center font-bold text-lg space-x-4">
-        {currentPage > 1 && (
+        {parseInt(currentPage) > 1 && (
           <button
-            disabled={currentPage === 1}
+            disabled={parseInt(currentPage) === 1}
             onClick={() => {
-              handlePageChange(currentPage - 1);
+              handlePageChange(parseInt(currentPage) - 1);
             }}
             className="px-2 py-1 shadow-md border-b-2 border-blue-400 hover:bg-blue-400 hover:text-white transition-all"
           >
             Previous
           </button>
         )}
-        {currentPage < totalPages && (
+        {parseInt(currentPage) < totalPages && (
           <button
-            disabled={currentPage == totalPages}
+            disabled={parseInt(currentPage) == totalPages}
             onClick={() => {
-              handlePageChange(currentPage + 1);
+              handlePageChange(parseInt(currentPage) + 1);
             }}
             className="px-2 py-1 shadow-md border-b-2 border-blue-400 hover:bg-blue-400 hover:text-white transition-all"
           >
