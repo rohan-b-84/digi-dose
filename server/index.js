@@ -19,7 +19,7 @@ const addSubscription = require("./controllers/addSubscription");
 app.use(express.static("data"));
 app.use(express.json());
 
-cron.schedule("*/15 * * * *", () => {
+cron.schedule("*/2 * * * *", () => {
   updateData(
     "india",
     "https://www.thehindu.com/news/national/feeder/default.rss",
