@@ -13,8 +13,8 @@ const NewsList = () => {
     limit: 9,
   });
 
-  const currentPage = searchParams.get("page");
-  const limit = searchParams.get("limit");
+  const currentPage = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 9;
 
   const { category } = useParams();
   const location = useLocation();
@@ -25,11 +25,7 @@ const NewsList = () => {
     setLoading(true);
 
     axios
-      .get(
-        `${BACKEND_URL}/news/${category}?page=${parseInt(
-          currentPage
-        )}&limit=${limit}`
-      )
+      .get(`${BACKEND_URL}/news/${category}?page=${currentPage}&limit=${limit}`)
       .then((res) => res.data)
       .then((data) => {
         setNEWS(data.news);
@@ -40,7 +36,7 @@ const NewsList = () => {
         alert("Some Error Occured");
         setLoading(true);
       });
-  }, [parseInt(currentPage), location.pathname]);
+  }, [currentPage, location.pathname]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -70,22 +66,22 @@ const NewsList = () => {
           ))}
       </div>
       <div className="flex justify-center font-bold text-lg space-x-4">
-        {parseInt(currentPage) > 1 && (
+        {currentPage > 1 && (
           <button
-            disabled={parseInt(currentPage) === 1}
+            disabled={currentPage === 1}
             onClick={() => {
-              handlePageChange(parseInt(currentPage) - 1);
+              handlePageChange(currentPage - 1);
             }}
             className="px-2 py-1 shadow-md border-b-2 border-blue-400 hover:bg-blue-400 hover:text-white transition-all"
           >
             Previous
           </button>
         )}
-        {parseInt(currentPage) < totalPages && (
+        {currentPage < totalPages && (
           <button
-            disabled={parseInt(currentPage) == totalPages}
+            disabled={currentPage == totalPages}
             onClick={() => {
-              handlePageChange(parseInt(currentPage) + 1);
+              handlePageChange(currentPage + 1);
             }}
             className="px-2 py-1 shadow-md border-b-2 border-blue-400 hover:bg-blue-400 hover:text-white transition-all"
           >
